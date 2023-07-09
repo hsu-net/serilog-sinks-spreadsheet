@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../../common.props" />
+
+    <PropertyGroup>
+<!--        <TargetFramework>net6.0</TargetFramework>-->
+        <TargetFrameworks>net461;net462;netstandard2.0;netstandard2.1;net6.0;net7.0;</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <VersionPrefix>2023.307.9</VersionPrefix>
+        <LangVersion>11.0</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>A Serilog sink that writes events to Spreadsheet</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ClosedXML" Version="0.102.0" />
+        <PackageReference Include="Serilog" Version="3.0.1" />
+        <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0" />
+    </ItemGroup>
+
+</Project>

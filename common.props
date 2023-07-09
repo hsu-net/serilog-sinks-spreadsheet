@@ -1,0 +1,18 @@
+﻿<Project>
+  <PropertyGroup>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/seayxu/serilog-sinks-excel.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/seayxu/serilog-sinks-excel</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <Company>Hsu</Company>
+    <Authors>Hsu</Authors>
+    <Copyright>Copyright © GodSharp 2022-Now</Copyright>
+    <OutputPath>$(MSBuildThisFileDirectory)output\$(AssemblyName)</OutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FB88FA1C-F292-4C4D-89DF-8B223038506C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Spreadsheet", "src\Serilog.Sinks.Spreadsheet\Serilog.Sinks.Spreadsheet.csproj", "{989E4AE5-6D04-4AEC-818B-FC4FF296BC10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelConsole", "sample\ExcelConsole\ExcelConsole.csproj", "{7146BED9-9364-4D7A-96C2-A2907DC49EA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{30950AF7-57AF-474A-A535-61B2DAA0D0E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NukeBuild", "nuke\NukeBuild.csproj", "{EE247AD0-7C7B-43E9-80CE-FDACF92149C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuke", "nuke", "{F8A1FA9B-CFF7-41D5-B6E1-831813F54346}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{989E4AE5-6D04-4AEC-818B-FC4FF296BC10} = {FB88FA1C-F292-4C4D-89DF-8B223038506C}
+		{7146BED9-9364-4D7A-96C2-A2907DC49EA7} = {30950AF7-57AF-474A-A535-61B2DAA0D0E9}
+		{EE247AD0-7C7B-43E9-80CE-FDACF92149C6} = {F8A1FA9B-CFF7-41D5-B6E1-831813F54346}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE247AD0-7C7B-43E9-80CE-FDACF92149C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE247AD0-7C7B-43E9-80CE-FDACF92149C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989E4AE5-6D04-4AEC-818B-FC4FF296BC10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989E4AE5-6D04-4AEC-818B-FC4FF296BC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989E4AE5-6D04-4AEC-818B-FC4FF296BC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989E4AE5-6D04-4AEC-818B-FC4FF296BC10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7146BED9-9364-4D7A-96C2-A2907DC49EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7146BED9-9364-4D7A-96C2-A2907DC49EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7146BED9-9364-4D7A-96C2-A2907DC49EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7146BED9-9364-4D7A-96C2-A2907DC49EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
