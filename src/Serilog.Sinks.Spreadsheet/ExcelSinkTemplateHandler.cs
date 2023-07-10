@@ -11,7 +11,7 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
     private string _logFileName;
     private ConcurrentDictionary<int, (string, XLDataType?, bool)>? _map;
 
-    public ExcelSinkTemplateHandler(Func<LogEvent,string> templateFactory)
+    public ExcelSinkTemplateHandler(Func<LogEvent, string> templateFactory)
     {
         _logFileName = string.Empty;
         _templateFactory = templateFactory;
@@ -26,7 +26,6 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
             if (name != _logFileName)
             {
                 _logFileName = name;
-
                 if (!Utils.Exists(_logFileName))
                 {
                     var tpl = _templateFactory(events.First());

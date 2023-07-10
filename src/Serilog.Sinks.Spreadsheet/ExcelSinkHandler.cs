@@ -49,7 +49,7 @@ internal class ExcelSinkHandler : IExcelSinkHandler
             IXLWorksheet worksheet;
             if (name != _logFileName)
             {
-                _logFileName = name;
+                _logFileName = name;                
                 if (!Utils.Exists(_logFileName))
                 {
                     workbook = new XLWorkbook();

@@ -53,6 +53,20 @@ internal class ExcelSink : IBatchedLogEventSink
             return Task.CompletedTask;
         }
         
+        var dir = Path.GetDirectoryName(name);
+        if (!Directory.Exists(dir))
+        {
+            try
+            {
+                Directory.CreateDirectory(dir!);
+            }
+            catch (Exception exception)
+            {
+                SelfLog.WriteLine("Process events throw exception : {Message}\r\n{Exception}", exception.Message, exception);
+                return Task.CompletedTask;
+            }
+        }
+        
         return _handler.BatchAsync(events,name);
     }
 
