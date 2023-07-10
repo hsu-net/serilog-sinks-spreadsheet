@@ -2,6 +2,8 @@
 using ClosedXML.Excel;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Parsing;
 
 namespace Serilog.Sinks.Spreadsheet;
 
@@ -10,11 +12,30 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
     private readonly Func<LogEvent, string> _templateFactory;
     private string _logFileName;
     private ConcurrentDictionary<int, (string, XLDataType?, bool)>? _map;
+    private readonly MessageTemplateTextFormatter? _timestampTemplate;
+    private readonly MessageTemplateTextFormatter? _levelTemplate;
+    private readonly MessageTemplateTextFormatter? _exceptionTemplate;
 
-    public ExcelSinkTemplateHandler(Func<LogEvent, string> templateFactory)
+    public ExcelSinkTemplateHandler(MessageTemplate messageTemplate,Func<LogEvent, string> templateFactory)
     {
         _logFileName = string.Empty;
         _templateFactory = templateFactory;
+        foreach(var token in messageTemplate.Tokens)
+        {
+            if (token is not PropertyToken property) continue;
+            switch (property.PropertyName)
+            {
+                case OutputProperties.TimestampPropertyName:
+                    _timestampTemplate = new MessageTemplateTextFormatter(property.ToString());
+                    break;
+                case OutputProperties.LevelPropertyName:
+                    _levelTemplate = new MessageTemplateTextFormatter(property.ToString());
+                    break;
+                case OutputProperties.ExceptionPropertyName:
+                    _exceptionTemplate = new MessageTemplateTextFormatter(property.ToString());
+                    break;
+            }
+        }
     }
 
     public Task BatchAsync(LogEvent[] events , string name)
@@ -70,7 +91,7 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
             var array = text.Split(':');
 
             if (array.Length == 1)
-            {
+            {                
                 fields.TryAdd(i, (text, null, false));
                 continue;
             }
@@ -94,7 +115,7 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
         return fields;
     }
 
-    private static void Append(IXLWorksheet worksheet,LogEvent[] events, ConcurrentDictionary<int, (string, XLDataType?, bool)> map)
+    private void Append(IXLWorksheet worksheet,LogEvent[] events, ConcurrentDictionary<int, (string, XLDataType?, bool)> map)
     {
         var rowNumber = worksheet.LastRowUsed().RowNumber();
         foreach(var logEvent in events)
@@ -111,6 +132,38 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
                         continue;
                     }
 
+                    switch (tuple.Value.Item1)
+                    {
+                        case OutputProperties.TimestampPropertyName:
+                        {
+                            using var writer = new StringWriter();
+                            _timestampTemplate?.Format(logEvent, writer);
+                            cell.Value = writer.ToString().Trim('"');
+                            continue;
+                        }
+                        case OutputProperties.LevelPropertyName:
+                        {
+                            using var writer = new StringWriter();
+                            _levelTemplate?.Format(logEvent, writer);
+                            cell.Value = writer.ToString().Trim('"');
+                            continue;
+                        }
+                        case OutputProperties.ExceptionPropertyName:
+                        {
+                            using var writer = new StringWriter();
+                            _exceptionTemplate?.Format(logEvent, writer);
+                            cell.Value = writer.ToString().Trim('"');
+                            continue;
+                        }
+                        case OutputProperties.MessagePropertyName:
+                        {
+                            using var writer = new StringWriter();
+                            logEvent.RenderMessage(writer);
+                            cell.Value = writer.ToString().Trim('"');
+                            continue;
+                        }
+                    }
+                    
                     if (!logEvent.Properties.TryGetValue(tuple.Value.Item1, out var val)) continue;
 
                     var value = val is StructureValue sv ? sv.ToString("l", null).Trim('"') : val.ToString().Trim('"');

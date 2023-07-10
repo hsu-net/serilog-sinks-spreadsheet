@@ -24,11 +24,12 @@ internal class ExcelSink : IBatchedLogEventSink
         _handler = new ExcelSinkHandler(tpl,propertiesEnabled);
     }
 
-    public ExcelSink(Func<LogEvent,string> fileNameFactory,Func<LogEvent,string> templateFactory)
+    public ExcelSink(Func<LogEvent,string> fileNameFactory,Func<LogEvent,string> templateFactory, string messageTemplate = ExcelSinkExtensions.DefaultTemplate)
     {
         _fileNameFactory = fileNameFactory ?? throw new ArgumentNullException(nameof(fileNameFactory));
         if (templateFactory == null) throw new ArgumentNullException(nameof(templateFactory));
-        _handler = new ExcelSinkTemplateHandler(templateFactory);
+        var tpl = new MessageTemplateParser().Parse(messageTemplate);
+        _handler = new ExcelSinkTemplateHandler(tpl,templateFactory);
     }
 
     public Task EmitBatchAsync(IEnumerable<LogEvent>? batch)

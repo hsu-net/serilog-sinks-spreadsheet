@@ -44,6 +44,7 @@ public static class ExcelSinkExtensions
     /// <param name="loggerSinkConfiguration"></param>
     /// <param name="template"></param>
     /// <param name="fileName"></param>
+    /// <param name="messageTemplate"></param>
     /// <param name="options"></param>
     /// <param name="minimumLevel"></param>
     /// <returns></returns>
@@ -51,12 +52,13 @@ public static class ExcelSinkExtensions
     public static LoggerConfiguration Excel(this LoggerSinkConfiguration loggerSinkConfiguration,
         string template,
         string fileName = DefaultLogName,
+        string messageTemplate = DefaultTemplate,
         PeriodicBatchingSinkOptions? options = null,
         LogEventLevel minimumLevel = LogEventLevel.Verbose
     )
     {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
-        return loggerSinkConfiguration.Excel(_ => template, _ => fileName, options, minimumLevel);
+        return loggerSinkConfiguration.Excel(_ => template, _ => fileName,messageTemplate, options, minimumLevel);
     }
 
     /// <summary>
@@ -91,12 +93,14 @@ public static class ExcelSinkExtensions
     /// <param name="templateFactory"></param>
     /// <param name="fileNameFactory"></param>
     /// <param name="minimumLevel"></param>
+    /// <param name="messageTemplate"></param>
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static LoggerConfiguration Excel(this LoggerSinkConfiguration loggerSinkConfiguration,
         Func<LogEvent, string> templateFactory,
         Func<LogEvent, string> fileNameFactory,
+        string messageTemplate = DefaultTemplate,
         PeriodicBatchingSinkOptions? options = null,
         LogEventLevel minimumLevel = LogEventLevel.Verbose
     )
@@ -104,7 +108,7 @@ public static class ExcelSinkExtensions
         if (templateFactory == null) throw new ArgumentNullException(nameof(templateFactory));
         if (fileNameFactory == null) throw new ArgumentNullException(nameof(fileNameFactory));
         return loggerSinkConfiguration.Sink(
-            new PeriodicBatchingSink(new ExcelSink(fileNameFactory, templateFactory), options ?? DefaultPeriodicBatchingOptions)
+            new PeriodicBatchingSink(new ExcelSink(fileNameFactory, templateFactory,messageTemplate), options ?? DefaultPeriodicBatchingOptions)
             , minimumLevel);
     }
 
