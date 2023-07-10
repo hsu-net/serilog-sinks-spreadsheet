@@ -7,14 +7,14 @@ namespace Serilog.Sinks.Spreadsheet;
 
 internal class ExcelSinkTemplateHandler : IExcelSinkHandler
 {
+    private readonly Func<LogEvent, string> _templateFactory;
     private string _logFileName;
-    private readonly string _template;
     private ConcurrentDictionary<int, (string, XLDataType?, bool)>? _map;
 
-    public ExcelSinkTemplateHandler(string template)
+    public ExcelSinkTemplateHandler(Func<LogEvent,string> templateFactory)
     {
         _logFileName = string.Empty;
-        _template = template;
+        _templateFactory = templateFactory;
     }
 
     public Task BatchAsync(LogEvent[] events , string name)
@@ -29,7 +29,13 @@ internal class ExcelSinkTemplateHandler : IExcelSinkHandler
 
                 if (!Utils.Exists(_logFileName))
                 {
-                    workbook = new XLWorkbook(_template);
+                    var tpl = _templateFactory(events.First());
+                    if (tpl == null)
+                    {
+                        SelfLog.WriteLine("Get template path is null:{@Event}",events.First());
+                        return Task.CompletedTask;
+                    }
+                    workbook = new XLWorkbook(tpl);
                     worksheet = workbook.Worksheets.Worksheet(1);
                     _map ??= GetColumns(worksheet);
                     Append(worksheet, events, _map);

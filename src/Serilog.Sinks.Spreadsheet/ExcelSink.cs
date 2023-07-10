@@ -23,25 +23,12 @@ internal class ExcelSink : IBatchedLogEventSink
         var tpl = new MessageTemplateParser().Parse(messageTemplate);
         _handler = new ExcelSinkHandler(tpl,propertiesEnabled);
     }
-    
-    public ExcelSink(Func<LogEvent,string> fileNameFactory, string template)
+
+    public ExcelSink(Func<LogEvent,string> fileNameFactory,Func<LogEvent,string> templateFactory)
     {
         _fileNameFactory = fileNameFactory ?? throw new ArgumentNullException(nameof(fileNameFactory));
-        if (!string.IsNullOrWhiteSpace(template))
-        {
-            if (File.Exists(template))
-            {
-                _handler = new ExcelSinkTemplateHandler(template);
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(template), "The template file is null");
-            }
-        }
-        else
-        {
-            throw new FileNotFoundException("File not found", template);
-        }
+        if (templateFactory == null) throw new ArgumentNullException(nameof(templateFactory));
+        _handler = new ExcelSinkTemplateHandler(templateFactory);
     }
 
     public Task EmitBatchAsync(IEnumerable<LogEvent>? batch)

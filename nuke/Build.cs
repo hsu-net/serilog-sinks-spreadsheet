@@ -106,7 +106,7 @@ partial class Build : NukeBuild
 
     string GetVersionPrefix()
     {
-        var dt = DateTime.Now;
+        var dt = DateTimeNow();
         return $"{dt:yyyy}.{(dt.Month - 1) / 3 + 1}{dt:MM}.{dt:dd}";
     }
 
@@ -114,9 +114,14 @@ partial class Build : NukeBuild
     {
         return Repository.Branch?.ToLower() switch
         {
-            PreviewBranch => $"{PreviewBranch}{DateTime.Now:HHmmss}",
+            PreviewBranch => $"{PreviewBranch}{DateTimeNow():HHmmss}",
             _ => null
         };
+    }
+
+    static DateTimeOffset DateTimeNow()
+    {
+        return DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(8));
     }
 
     Target Copy => _ => _
