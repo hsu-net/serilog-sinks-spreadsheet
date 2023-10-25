@@ -8,6 +8,7 @@ using Nuke.Common.Utilities.Collections;
 using Nuke.Components;
 using Serilog;
 using System;
+using System.Linq;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 // ReSharper disable VariantPathSeparationHighlighting
@@ -143,7 +144,10 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             (ArtifactsDirectory / "packages")
-                .GlobFiles("**/*")
+                .GlobFiles("**/*.nupkg")
+                .ForEach(Nuget);
+            (ArtifactsDirectory / "packages")
+                .GlobFiles("**/*.snupkg")
                 .ForEach(Nuget);
         });
 
