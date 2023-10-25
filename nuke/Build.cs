@@ -60,7 +60,7 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => IsServerBuild)
         .Executes(() =>
         {
-            Version = $"{GetVersionPrefix()}-{GetVersionSuffix()}";
+            Version = $"{GetVersionPrefix()}{GetVersionSuffix()}";
         });
 
     Target Clean => _ => _
@@ -105,8 +105,8 @@ partial class Build : NukeBuild
     {
         return Repository.Branch?.ToLower() switch
         {
-            PreviewBranch => $"{PreviewBranch}{DateTimeNow():HHmmss}",
-            _ => null
+            MainBranch => null,
+            _ => $"-{PreviewBranch}{DateTimeNow():HHmmss}"
         };
     }
 
