@@ -22,6 +22,7 @@ using Octokit;
 [GitHubActions(
     "deploy",
     GitHubActionsImage.UbuntuLatest,
+    WritePermissions = new [] { GitHubActionsPermissions.Contents },
     AutoGenerate = true,
     PublishArtifacts = true,
     EnableGitHubToken = true,
