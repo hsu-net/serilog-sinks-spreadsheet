@@ -6,7 +6,7 @@ var tpl = Path.Combine(Environment.CurrentDirectory,"tpl.xlsx");
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Verbose()
     .WriteTo.Console()
-    .WriteTo.Excel()
+    //.WriteTo.Excel()
     .WriteTo.Excel(tpl,"{Timestamp:yyyy-MM-dd}-tpl.xlsx")
     .CreateLogger();
 

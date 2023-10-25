@@ -32,43 +32,55 @@ internal class ExcelSink : IBatchedLogEventSink
         _handler = new ExcelSinkTemplateHandler(tpl,templateFactory);
     }
 
-    public Task EmitBatchAsync(IEnumerable<LogEvent>? batch)
+    public async Task EmitBatchAsync(IEnumerable<LogEvent>? batch)
     {
-        var events = batch as LogEvent[] ?? batch?.ToArray();
-        if (events == null || events.Length==0) return Task.CompletedTask;
-        
-        // Get log file name
-        TextWriter buffer = new StringWriter(new StringBuilder());
-        var fileName = _fileNameFactory(events.First());
-        if (string.IsNullOrWhiteSpace(fileName))
+        if (batch == null) return;
+        var dic = new Dictionary<string, List<LogEvent>>();
+        foreach(var logEvent in batch)
         {
-            SelfLog.WriteLine("Get a null log file name");
-            return Task.CompletedTask;
-        }
-        
-        new MessageTemplateTextFormatter(fileName).Format(events.First(), buffer);
-        var name = buffer.ToString();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            SelfLog.WriteLine("No name specified for event");
-            return Task.CompletedTask;
-        }
-        
-        var dir = Path.GetDirectoryName(name);
-        if (!Directory.Exists(dir))
-        {
+            // Get log file name
+            TextWriter buffer = new StringWriter(new StringBuilder());
+            var fileName = _fileNameFactory(logEvent);
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                SelfLog.WriteLine("Get a null log file name");
+                continue;
+            }
+
+            new MessageTemplateTextFormatter(fileName).Format(logEvent, buffer);
+            var name = buffer.ToString();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                SelfLog.WriteLine("No name specified for event");
+                continue;
+            }
+
+            if (dic.TryGetValue(name, out var list))
+            {
+                list!.Add(logEvent);
+                continue;
+            }
+
+            dic.Add(name, new List<LogEvent> { logEvent });
+            
+            var dir = Path.GetDirectoryName(name);
+            if(string.IsNullOrWhiteSpace(dir)) continue;
+            if (Directory.Exists(dir)) continue;
+            
             try
             {
-                Directory.CreateDirectory(dir!);
+                Directory.CreateDirectory(dir);
             }
             catch (Exception exception)
             {
                 SelfLog.WriteLine("Process events throw exception : {Message}\r\n{Exception}", exception.Message, exception);
-                return Task.CompletedTask;
             }
         }
         
-        return _handler.BatchAsync(events,name);
+        foreach(var item in dic)
+        {
+            await _handler.BatchAsync(item.Value.ToArray(), item.Key);
+        }
     }
 
     public Task OnEmptyBatchAsync()
