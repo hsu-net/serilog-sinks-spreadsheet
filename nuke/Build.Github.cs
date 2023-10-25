@@ -4,17 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using MimeMapping;
 using Nuke.Common;
-using Nuke.Common.ChangeLog;
 using Nuke.Common.CI.GitHubActions;
-using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.Tools.GitHub;
-using Nuke.Common.Tools.GitVersion;
-using Nuke.Common.Utilities;
-using Nuke.Common.Utilities.Collections;
 using Octokit;
-using Serilog;
-using static Nuke.Common.Tools.GitHub.GitHubTasks;
 
 [GitHubActions(
     "build",
@@ -46,7 +39,7 @@ partial class Build
         .DependsOn(Artifacts)
         .Executes(async () =>
         {
-            var tag = $"v{DateTime.Now:yyyyMMddHHmmss}";
+            var tag = $"v{Version}";
             GitHubTasks.GitHubClient.Credentials ??= new Credentials(GitHubActions.Token.NotNull());
             var release = await GitHubTasks.GitHubClient.Repository.Release.Create(
                 Repository.GetGitHubOwner(),
@@ -56,7 +49,7 @@ partial class Build
                     Name = tag,
                     Prerelease = true,
                     Draft = true,
-                    Body = $"Release at {DateTime.Now:yyyy-MM-dd HHmmss}"
+                    Body = $"Release v{Version} at {DateTime.Now:yyyy-MM-dd HHmmss}"
                 });
 
             var uploads = ArtifactsDirectory.GlobFiles("**/*").NotNull().Select(async x =>

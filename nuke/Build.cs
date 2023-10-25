@@ -42,8 +42,7 @@ partial class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository Repository;
-
-
+    
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath OutputDirectory => RootDirectory / "output";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
@@ -105,7 +104,7 @@ partial class Build : NukeBuild
     {
         return Repository.Branch?.ToLower() switch
         {
-            MainBranch => null,
+            MainBranch  when IsServerBuild => null,
             _ => $"-{PreviewBranch}{DateTimeNow():HHmmss}"
         };
     }
